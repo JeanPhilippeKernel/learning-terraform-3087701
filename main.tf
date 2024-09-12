@@ -53,26 +53,22 @@ module "blog_alb" {
   subnets = module.blog_vpc.public_subnets
   security_groups = [module.blog_security_group.security_group_id]
 
-  listeners = {
-    ex-http = {
+  http_tcp_listeners = [
+    {
       port     = 80
       protocol = "HTTP"
-
-      forward = {
-        target_group_key = "ex-instance"
-      }
-
+      target_group_index = 0
     }
-  }
+  ]
 
-  target_groups = {
-    ex-instance = {
+  target_groups = [
+    {
       name_prefix      = "blog-"
       protocol         = "HTTP"
       port             = 80
       target_type      = "instance"
     }
-  }
+  ]
 
   tags = {
     Environment = "dev"
