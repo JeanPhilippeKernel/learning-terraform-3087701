@@ -41,11 +41,12 @@ module "autoscaling" {
   security_groups     = [module.blog_security_group.security_group_id]
 
   image_id            = data.aws_ami.app_ami.id
-  instance_type = var.instance_type
+  instance_type       = var.instance_type
 }
 
 module "blog_alb" {
   source = "terraform-aws-modules/alb/aws"
+  version = "~> 6.0"
 
   name    = "blog-alb"
   vpc_id  = module.blog_vpc.vpc_id
@@ -58,20 +59,19 @@ module "blog_alb" {
       protocol = "HTTP"
 
       forward = {
-        # target_group_key = "ex-instance"
+        target_group_key = "ex-instance"
       }
 
     }
   }
 
   target_groups = {
-    # ex-instance = {
-    #   name_prefix      = "blog-"
-    #   protocol         = "HTTP"
-    #   port             = 80
-    #   target_type      = "instance"
-    #   target_id        = aws_instance.blog.id
-    # }
+    ex-instance = {
+      name_prefix      = "blog-"
+      protocol         = "HTTP"
+      port             = 80
+      target_type      = "instance"
+    }
   }
 
   tags = {
